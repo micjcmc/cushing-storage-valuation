@@ -1,4 +1,4 @@
-\# Cushing Crude Storage Valuation
+# Cushing Crude Storage Valuation
 
 
 
@@ -6,7 +6,7 @@ A quantitative research project examining the value of flexible crude-oil storag
 
 
 
-\## Project Status
+## Project Status
 
 
 
@@ -14,21 +14,21 @@ Parts I-II are complete and comprise the following:
 
 
 
-\- EIA API ingestion pipeline
+- EIA API ingestion pipeline
 
-\- SQLite research database
+- SQLite research database
 
-\- Physical crude-market domain tables
+- Physical crude-market domain tables
 
-\- WTI spot and futures-curve data
+- WTI spot and futures-curve data
 
-\- Calendar-spread construction
+- Calendar-spread construction
 
-\- Weekly feature engineering
+- Weekly feature engineering
 
-\- Point-in-time seasonal inventory statistics
+- Point-in-time seasonal inventory statistics
 
-\- Validation and economic sanity checks
+- Validation and economic sanity checks
 
 
 
@@ -36,7 +36,7 @@ Later stages will extend the project into storage valuation, stochastic modeling
 
 
 
-\## Research Pipeline
+## Research Pipeline
 
 
 
@@ -44,39 +44,39 @@ Later stages will extend the project into storage valuation, stochastic modeling
 
 EIA API
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 Python ETL
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 SQLite Database
 
-&#x20;  |
+   |
 
-&#x20;  +-- inventories
+   +-- inventories
 
-&#x20;  +-- refinery\_activity
+   +-- refinery_activity
 
-&#x20;  +-- flows
+   +-- flows
 
-&#x20;  +-- prices
+   +-- prices
 
-&#x20;  +-- calendar\_spreads
+   +-- calendar_spreads
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
-weekly\_features
+weekly_features
 
-&#x20;  |
+   |
 
-&#x20;  v
+   v
 
 Storage Economics / Valuation / Hedging
 
@@ -84,39 +84,41 @@ Storage Economics / Valuation / Hedging
 
 
 
-\## Current Features
+## Current Features
 
 
 
 The weekly research panel includes:
 
-\- Cushing crude inventories
 
-\- PADD 2 crude inventories
 
-\- PADD 2 refinery crude inputs
+- Cushing crude inventories
 
-\- Refinery utilization
+- PADD 2 crude inventories
 
-\- U.S. crude production
+- PADD 2 refinery crude inputs
 
-\- U.S. crude imports and exports
+- Refinery utilization
 
-\- WTI spot prices
+- U.S. crude production
 
-\- Front WTI futures contracts
+- U.S. crude imports and exports
 
-\- Calendar spreads
+- WTI spot prices
 
-\- Inventory lags and changes
+- Front WTI futures contracts
 
-\- Four-week rolling features
+- Calendar spreads
 
-\- Net crude imports
+- Inventory lags and changes
 
-\- ISO-week seasonality
+- Four-week rolling features
 
-\- Point-in-time seasonal inventory z-scores
+- Net crude imports
+
+- ISO-week seasonality
+
+- Point-in-time seasonal inventory z-scores
 
 
 
@@ -124,45 +126,50 @@ Seasonal statistics are constructed using only observations available prior to e
 
 
 
+## Repository Structure
 
 
-\## Repository Structure
 
-``` text
+```text
 
 src/
 
-&#x20;   ingestion/
+    ingestion/
 
-&#x20;       eia\_api.py
+        eia_api.py
 
 
 
 sql/
 
-&#x20;   inventories.sql
+    inventories.sql
 
-&#x20;   refinery\_activity.sql
+    refinery_activity.sql
 
-&#x20;   flows.sql
+    flows.sql
 
-&#x20;   prices.sql
+    prices.sql
 
-&#x20;   calendar\_spreads.sql
+    calendar_spreads.sql
 
-&#x20;   weekly\_features.sql
+    weekly_features.sql
 
-&#x20;   analytics.sql
+    analytics.sql
 
-&#x20;   validation.sql
+    validation.sql
 
 ```
 
 
 
-\## Data
+## Data
 
 
 
-The project uses public U.S. Energy Information Administration data. Local databases, generated data files, and API credentials are excluded from version control.
+The project uses public \[U.S. Energy Information Administration (EIA)](https://www.eia.gov/) data.
+
+
+
+Local databases, generated data files, and API credentials are excluded from version control.
+
 
