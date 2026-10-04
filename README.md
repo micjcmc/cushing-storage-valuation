@@ -166,7 +166,7 @@ sql/
 
 
 
-The project uses public \[U.S. Energy Information Administration (EIA)](https://www.eia.gov/) data.
+The project uses public [U.S. Energy Information Administration (EIA)](https://www.eia.gov/) data.
 
 
 
