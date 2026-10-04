@@ -1,0 +1,26 @@
+# Secrets
+.env
+
+
+# Python
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+
+# Database / generated data
+*.db
+*.sqlite
+*.sqlite3
+
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.vscode/
+
+
+# Local development / Archived Versions
+*_OLD.sql
+*_OLD.py
