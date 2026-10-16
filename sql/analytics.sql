@@ -324,3 +324,246 @@ SELECT
 
 FROM historical_stats
 ORDER BY period;
+
+
+-- Count contango vs backwardation in calendar_spreads.sql
+SELECT
+    SUM(
+        CASE
+            WHEN cl2_minus_cl1_usd_bbl > 0
+            THEN 1 ELSE 0
+        END
+    ) AS contango_weeks,
+
+    SUM(
+        CASE
+            WHEN cl2_minus_cl1_usd_bbl < 0
+            THEN 1 ELSE 0
+        END
+    ) AS backwardation_weeks,
+
+    SUM(
+        CASE
+            WHEN cl2_minus_cl1_usd_bbl = 0
+            THEN 1 ELSE 0
+        END
+    ) AS flat_weeks
+
+FROM calendar_spreads;
+
+
+
+
+
+
+---- Full weekly_features.sql Stage 2 query
+WITH base_weekly AS (
+    SELECT
+        i.period,
+
+        i.cushing_inventory_mbbl,
+        i.padd2_inventory_mbbl,
+
+        r.padd2_crude_input_mbbl_d,
+        r.padd2_refinery_utilization_pct,
+
+        f.us_crude_production_mbbl_d,
+        f.us_crude_imports_mbbl_d,
+        f.us_crude_exports_mbbl_d,
+
+        p.wti_spot_usd_bbl,
+        p.cl1_usd_bbl,
+        p.cl2_usd_bbl,
+        p.cl3_usd_bbl,
+        p.cl4_usd_bbl,
+
+        c.cl2_minus_cl1_usd_bbl,
+        c.cl3_minus_cl2_usd_bbl,
+        c.cl4_minus_cl3_usd_bbl,
+        c.cl3_minus_cl1_usd_bbl,
+        c.cl4_minus_cl1_usd_bbl
+
+    FROM inventories AS i
+
+    LEFT JOIN refinery_activity AS r
+        ON i.period = r.period
+
+    LEFT JOIN flows AS f
+        ON i.period = f.period
+
+    LEFT JOIN prices AS p
+        ON i.period = p.period
+
+    LEFT JOIN calendar_spreads AS c
+        ON i.period = c.period
+    
+    WHERE i.cushing_inventory_mbbl IS NOT NULL
+),
+
+lagged_features AS (
+    SELECT
+        *,
+
+        -- Cushing Inventory Lags
+        LAG(cushing_inventory_mbbl, 1) OVER (
+            ORDER BY period
+        ) AS cushing_inventory_lag1_mbbl,
+
+        LAG(cushing_inventory_mbbl, 4) OVER (
+            ORDER BY period
+        ) AS cushing_inventory_lag4_mbbl,
+
+        -- Cushing Inventory Changes
+        cushing_inventory_mbbl
+            - LAG(cushing_inventory_mbbl, 1) OVER (
+                ORDER BY period
+            )
+            AS cushing_inventory_change_1w_mbbl,
+
+        cushing_inventory_mbbl
+            - LAG(cushing_inventory_mbbl, 4) OVER (
+                ORDER BY period
+            )
+            AS cushing_inventory_change_4w_mbbl,
+
+        padd2_inventory_mbbl                                           ---- 2C: Add PADD 2 Inventory Changes
+            - LAG(padd2_inventory_mbbl, 1) OVER (
+                ORDER BY period
+            ) AS padd2_inventory_change_1w_mbbl,
+
+        padd2_inventory_mbbl
+            - LAG(padd2_inventory_mbbl, 4) OVER (
+                ORDER BY period
+            ) AS padd2_inventory_change_4w_mbbl,
+
+        us_crude_imports_mbbl_d                                         ---- 2D: Derive Net Imports (not technically a lag but a useful derived feature)
+            - us_crude_exports_mbbl_d                                        -- ^ Did this here rather than in flows.sql to keep clean source measurements and derived features separate
+            AS us_crude_net_imports_mbbl_d,
+
+        cl2_minus_cl1_usd_bbl                                           ---- 2E: Derive the change in the front calendar spread
+            - LAG(cl2_minus_cl1_usd_bbl, 1) OVER (
+                ORDER BY period
+            )
+            AS front_spread_change_1w_usd_bbl
+
+    FROM base_weekly
+)
+-- Inspect around a known period
+SELECT
+    period,
+    cushing_inventory_mbbl,
+    cushing_inventory_lag1_mbbl,
+    cushing_inventory_change_1w_mbbl,
+    cushing_inventory_change_4w_mbbl,
+    cl2_minus_cl1_usd_bbl,
+    front_spread_change_1w_usd_bbl
+FROM lagged_features
+WHERE period BETWEEN '2020-04-01' AND '2020-05-15'
+ORDER BY period;
+
+
+
+---- To determine contango or backwardation
+  -- Contango using DESC at bottom
+SELECT
+    period,
+    cushing_inventory_mbbl,
+    cl1_usd_bbl,
+    cl2_usd_bbl,
+    cl4_usd_bbl,
+
+    cl2_minus_cl1_usd_bbl,
+    cushing_inventory_change_1w_mbbl,
+    
+    cl4_minus_cl1_usd_bbl,
+    cushing_inventory_change_4w_mbbl
+
+FROM weekly_features
+
+ORDER BY cl4_minus_cl1_usd_bbl DESC
+
+LIMIT 15;
+
+  -- Backwardation using ASC at bottom (IS NOT NULL to avoid null values)
+SELECT
+    period,
+    cushing_inventory_mbbl,
+    cl1_usd_bbl,
+    cl2_usd_bbl,
+    cl4_usd_bbl,
+
+    cl2_minus_cl1_usd_bbl,
+    cushing_inventory_change_1w_mbbl,
+    
+    cl4_minus_cl1_usd_bbl,
+    cushing_inventory_change_4w_mbbl
+
+FROM weekly_features
+
+WHERE cl4_minus_cl1_usd_bbl IS NOT NULL
+
+ORDER BY cl4_minus_cl1_usd_bbl ASC
+
+LIMIT 15;
+
+
+
+---- To check term structure of carry. Here, for a given F4 - F1 spread, we analyze the subspreads F2 - F1, F3 - F2, and F4 - F3 to inspect
+---- ^ the concentration of either contango or backwardation. Two leading contango dates and the leading backwardation date chosen from 
+---- ^ the output of the above query.
+
+SELECT
+    period,
+
+    ROUND(cl1_usd_bbl, 2) AS cl1,
+    ROUND(cl2_usd_bbl, 2) AS cl2,
+    ROUND(cl3_usd_bbl, 2) AS cl3,
+    ROUND(cl4_usd_bbl, 2) AS cl4,
+
+    ROUND(cl2_minus_cl1_usd_bbl, 2) AS f2_f1,
+    ROUND(cl3_minus_cl2_usd_bbl, 2) AS f3_f2,
+    ROUND(cl4_minus_cl3_usd_bbl, 2) AS f4_f3,
+    ROUND(cl4_minus_cl1_usd_bbl, 2) AS f4_f1
+
+FROM weekly_features
+
+WHERE period IN (
+    '2009-02-13',
+    '2020-04-24',
+    '2022-03-11'
+)
+
+ORDER BY period;
+
+
+
+---- Analyzing front slope share and front vs. back curvature
+SELECT
+    period,
+
+    ROUND(cl2_minus_cl1_usd_bbl, 2) AS f2_f1,
+    ROUND(cl3_minus_cl2_usd_bbl, 2) AS f3_f2,
+    ROUND(cl4_minus_cl3_usd_bbl, 2) AS f4_f3,
+    ROUND(cl4_minus_cl1_usd_bbl, 2) AS f4_f1,
+
+    ROUND (
+        cl2_minus_cl1_usd_bbl
+        / NULLIF(cl4_minus_cl1_usd_bbl, 0),
+        3
+    ) AS front_share_of_total_slope,
+
+    ROUND(
+        cl2_minus_cl1_usd_bbl
+        - cl4_minus_cl3_usd_bbl,
+        2
+    ) AS front_vs_back_curvature
+
+FROM weekly_features
+
+WHERE period IN (
+    '2009-02-13',
+    '2020-04-24',
+    '2022-03-11'
+)
+
+ORDER BY period;
