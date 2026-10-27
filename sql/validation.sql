@@ -1175,3 +1175,64 @@ SELECT
 FROM weekly_features
 WHERE period BETWEEN '2020-04-01' AND '2020-05-15'
 ORDER BY period;
+
+
+
+
+
+
+
+
+
+---- Validating weekly_storage_state.sql
+
+SELECT
+    COUNT(*) AS n_rows,
+    MIN(period) AS first_period,
+    MAX(period) AS last_period
+FROM weekly_storage_state;
+
+SELECT
+    COUNT(*) AS n_with_utilization
+FROM weekly_storage_state
+WHERE cushing_total_utilization IS NOT NULL;
+
+SELECT
+    period,
+    capacity_reference_month,
+    capacity_effective_date,
+    cushing_inventory_mbbl,
+    cushing_working_capacity_mbbl,
+    cushing_pipeline_fill_mbbl,
+    estimated_cushing_tank_inventory_mbbl,
+
+    ROUND(cushing_tank_utilization * 100, 2)
+        AS tank_utilization_pct,
+
+    ROUND(cushing_total_utilization * 100, 2)
+        AS total_utilization_pct
+
+FROM weekly_storage_state
+
+WHERE period BETWEEN '2020-03-01' AND '2020-05-31'
+
+ORDER BY period;
+
+SELECT
+    period,
+    cushing_inventory_mbbl,
+
+    ROUND(cushing_tank_utilization * 100, 2)
+        AS tank_utilization_pct,
+
+    ROUND(cushing_total_utilization * 100, 2)
+        AS total_utilization_pct
+
+FROM weekly_storage_state
+
+WHERE cushing_total_utilization IS NOT NULL
+
+ORDER BY cushing_total_utilization DESC
+
+LIMIT 20;
+

@@ -18,6 +18,20 @@ CREATE TABLE weekly_features (
     us_crude_imports_mbbl_d REAL,
     us_crude_exports_mbbl_d REAL,
 
+    -- Cushing storage-state variables
+    capacity_reference_month TEXT,
+    capacity_effective_date TEXT,
+
+    cushing_working_capacity_mbbl REAL,
+    cushing_shell_capacity_mbbl REAL,
+    cushing_pipeline_fill_mbbl REAL,
+    cushing_working_capacity_plus_transit_mbbl REAL,
+
+    estimated_cushing_tank_inventory_mbbl REAL,
+
+    cushing_tank_utilization REAL,
+    cushing_total_utilization REAL,
+
     -- Base price variables
     wti_spot_usd_bbl REAL,
     cl1_usd_bbl REAL,
@@ -78,6 +92,19 @@ WITH base_weekly AS (
         i.cushing_inventory_mbbl,
         i.padd2_inventory_mbbl,
 
+        ws.capacity_reference_month,
+        ws.capacity_effective_date,
+
+        ws.cushing_working_capacity_mbbl,
+        ws.cushing_shell_capacity_mbbl,
+        ws.cushing_pipeline_fill_mbbl,
+        ws.cushing_working_capacity_plus_transit_mbbl,
+
+        ws.estimated_cushing_tank_inventory_mbbl,
+
+        ws.cushing_tank_utilization,
+        ws.cushing_total_utilization,
+
         r.padd2_crude_input_mbbl_d,
         r.padd2_refinery_utilization_pct,
 
@@ -110,6 +137,9 @@ WITH base_weekly AS (
 
     LEFT JOIN calendar_spreads AS c
         ON i.period = c.period
+
+    LEFT JOIN weekly_storage_state AS ws
+        ON i.period = ws.period
     
     WHERE i.cushing_inventory_mbbl IS NOT NULL
 ),
@@ -323,6 +353,19 @@ INSERT INTO weekly_features (
     cushing_inventory_mbbl,
     padd2_inventory_mbbl,
 
+    capacity_reference_month,
+    capacity_effective_date,
+
+    cushing_working_capacity_mbbl,
+    cushing_shell_capacity_mbbl,
+    cushing_pipeline_fill_mbbl,
+    cushing_working_capacity_plus_transit_mbbl,
+
+    estimated_cushing_tank_inventory_mbbl,
+
+    cushing_tank_utilization,
+    cushing_total_utilization,
+
     padd2_crude_input_mbbl_d,
     padd2_refinery_utilization_pct,
 
@@ -380,6 +423,19 @@ SELECT
 
     cushing_inventory_mbbl,
     padd2_inventory_mbbl,
+
+    capacity_reference_month,
+    capacity_effective_date,
+
+    cushing_working_capacity_mbbl,
+    cushing_shell_capacity_mbbl,
+    cushing_pipeline_fill_mbbl,
+    cushing_working_capacity_plus_transit_mbbl,
+
+    estimated_cushing_tank_inventory_mbbl,
+
+    cushing_tank_utilization,
+    cushing_total_utilization,
 
     padd2_crude_input_mbbl_d,
     padd2_refinery_utilization_pct,
