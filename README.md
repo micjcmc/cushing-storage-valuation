@@ -212,7 +212,7 @@ Two utilization measures are constructed.
 
 Tank-only utilization:
 
-\[
+$$
 U_t^{tank}
 =
 \frac{
@@ -220,11 +220,10 @@ Inventory_t - PipelineFill_t
 }{
 WorkingCapacity_t
 }
-\]
-
+$$
 and total utilization:
 
-\[
+$$
 U_t^{total}
 =
 \frac{
@@ -232,8 +231,7 @@ Inventory_t
 }{
 WorkingCapacity_t + Transit_t
 }.
-\]
-
+$$
 The total-utilization measure is used as the primary weekly storage-state variable, while tank-only utilization is retained as a robustness measure.
 
 An important descriptive result is that the highest aggregate utilization observations occur in periods such as 2016-2017 rather than during April 2020.
@@ -326,79 +324,68 @@ Given an observed WTI forward curve, the model determines the optimal sequence o
 
 For periods
 
-\[
+$$
 t=1,\ldots,T,
-\]
-
+$$
 define the decision variables:
 
-\[
+$$
 I_t
 =
 \text{crude injected during period }t
-\]
-
-\[
+$$
+$$
 W_t
 =
 \text{crude withdrawn during period }t
-\]
-
-\[
+$$
+$$
 S_t
 =
 \text{ending inventory after period }t.
-\]
-
+$$
 The primary market input is:
 
-\[
+$$
 F_t
 =
 \text{WTI futures price associated with period }t.
-\]
-
+$$
 Physical and economic parameters include:
 
-\[
+$$
 Q
 =
 \text{maximum storage capacity}
-\]
-
-\[
+$$
+$$
 I^{\max}
 =
 \text{maximum injection throughput}
-\]
-
-\[
+$$
+$$
 W^{\max}
 =
 \text{maximum withdrawal throughput}
-\]
-
-\[
+$$
+$$
 c_I
 =
 \text{injection cost per unit}
-\]
-
-\[
+$$
+$$
 c_W
 =
 \text{withdrawal cost per unit}
-\]
-
-\[
+$$
+$$
 c_S
 =
 \text{storage cost per unit per period}.
-\]
-
+$$
 The objective is:
 
-\[
+$$
 \max
 \sum_{t=1}^{T}
 \left[
@@ -412,8 +399,7 @@ c_W W_t
 -
 c_S S_t
 \right].
-\]
-
+$$
 The model earns revenue from withdrawn crude, incurs the market cost of acquiring crude for injection, and subtracts modeled operating and carrying costs.
 
 ---
@@ -422,7 +408,7 @@ The model earns revenue from withdrawn crude, incurs the market cost of acquirin
 
 Every barrel must be physically accounted for:
 
-\[
+$$
 S_t
 =
 S_{t-1}
@@ -432,11 +418,10 @@ I_t
 W_t
 \qquad
 \forall t.
-\]
-
+$$
 Inventory is bounded by storage capacity:
 
-\[
+$$
 0
 \leq
 S_t
@@ -444,46 +429,41 @@ S_t
 Q
 \qquad
 \forall t.
-\]
-
+$$
 Injection is constrained by maximum injection throughput:
 
-\[
+$$
 0
 \leq
 I_t
 \leq
 I^{\max}.
-\]
-
+$$
 Withdrawal is constrained by maximum withdrawal throughput:
 
-\[
+$$
 0
 \leq
 W_t
 \leq
 W^{\max}.
-\]
-
+$$
 ---
 
 ## Terminal Inventory
 
 The current formulation requires:
 
-\[
+$$
 S_T=S_0.
-\]
-
+$$
 This prevents the optimizer from generating artificial value by ending the horizon with a different inventory position from the one with which it began.
 
 For most historical intrinsic-value experiments:
 
-\[
+$$
 S_0=0.
-\]
-
+$$
 ---
 
 ## Mixed-Integer Operating Constraint
@@ -492,60 +472,52 @@ The first linear-programming formulation allowed simultaneous injection and with
 
 Such solutions could have no effect on either inventory or objective value:
 
-\[
+$$
 I_t=W_t
-\]
-
+$$
 implies:
 
-\[
+$$
 S_t=S_{t-1}
-\]
-
+$$
 and, if injection and withdrawal occur at the same market price with zero operating cost:
 
-\[
+$$
 F_tW_t-F_tI_t=0.
-\]
-
+$$
 Although mathematically feasible, this behavior is not operationally meaningful.
 
 A binary operating-mode variable was therefore introduced:
 
-\[
+$$
 y_t\in\{0,1\}.
-\]
-
+$$
 The model imposes:
 
-\[
+$$
 I_t
 \leq
 I^{\max}y_t
-\]
-
+$$
 and:
 
-\[
+$$
 W_t
 \leq
 W^{\max}(1-y_t).
-\]
-
+$$
 When:
 
-\[
+$$
 y_t=1,
-\]
-
+$$
 the facility may inject but cannot withdraw.
 
 When:
 
-\[
+$$
 y_t=0,
-\]
-
+$$
 the facility may withdraw but cannot inject.
 
 The resulting optimization problem is a mixed-integer linear program.
@@ -590,7 +562,7 @@ Optimal intrinsic value
 
 The April 24, 2020 forward curve was approximately:
 
-\[
+$$
 F_1=3.92,
 \qquad
 F_2=19.07,
@@ -598,26 +570,21 @@ F_2=19.07,
 F_3=23.34,
 \qquad
 F_4=25.50.
-\]
-
+$$
 Using the illustrative facility assumptions:
 
-\[
+$$
 Q=100
-\]
-
-\[
+$$
+$$
 I^{\max}=40
-\]
-
-\[
+$$
+$$
 W^{\max}=40
-\]
-
-\[
+$$
+$$
 S_0=0,
-\]
-
+$$
 with zero operating costs, the optimizer produces:
 
 | Contract | Price | Injection | Withdrawal | Ending Inventory |
@@ -629,10 +596,9 @@ with zero operating costs, the optimizer produces:
 
 The modeled intrinsic value is:
 
-\[
-\boxed{V^\*=1034}
-\]
-
+$$
+\boxed{V^{*}=1034}
+$$
 under the illustrative asset scale.
 
 The optimizer responds to the steep contango by acquiring and injecting crude during the cheaper early periods, accumulating inventory, and withdrawing later when futures prices are higher.
@@ -641,10 +607,9 @@ The withdrawal-rate constraint is operationally important.
 
 Although CL4 has the highest futures price, the facility cannot wait until CL4 to liquidate all 80 stored units because:
 
-\[
+$$
 W^{\max}=40.
-\]
-
+$$
 It must therefore begin withdrawing during CL3.
 
 This demonstrates the distinction between observing a calendar spread and determining how much of that spread a physically constrained asset can actually capture.
@@ -655,7 +620,7 @@ This demonstrates the distinction between observing a calendar spread and determ
 
 For March 11, 2022:
 
-\[
+$$
 113.43
 >
 109.96
@@ -663,30 +628,26 @@ For March 11, 2022:
 106.14
 >
 102.60.
-\]
-
+$$
 The curve is strongly backwardated.
 
 With:
 
-\[
+$$
 S_0=0,
-\]
-
+$$
 the optimal policy is:
 
-\[
+$$
 I_t=W_t=S_t=0
 \qquad
 \forall t.
-\]
-
+$$
 The modeled intrinsic value is:
 
-\[
-\boxed{V^\*=0}.
-\]
-
+$$
+\boxed{V^{*}=0}.
+$$
 This is economically sensible.
 
 An initially empty facility has no incentive to acquire crude at a high nearby price and carry it forward to lower future prices.
@@ -699,15 +660,14 @@ The 2022 regime therefore provides a useful sanity check against the positive-va
 
 The model is solved repeatedly over the historical CL1-CL4 sample.
 
-For each valuation date \(d\):
+For each valuation date $d$:
 
-\[
-V_d^\*
+$$
+V_d^{*}
 =
 \max_{\{I,W,S,y\}}
 \text{Storage Profit}.
-\]
-
+$$
 Using identical physical asset assumptions across dates produces a historical series of deterministic intrinsic storage value.
 
 This transforms the forward curve from a descriptive market object into a measure of economically realizable storage value.
@@ -722,14 +682,13 @@ The resulting historical series exhibits:
 
 Under the illustrative asset assumptions, the April 24, 2020 curve produces approximately:
 
-\[
-\frac{V^\*}{Q}
+$$
+\frac{V^{*}}{Q}
 =
 \frac{1034}{100}
 =
 10.34
-\]
-
+$$
 units of intrinsic value per unit of storage capacity.
 
 ---
@@ -738,13 +697,12 @@ units of intrinsic value per unit of storage capacity.
 
 The optimization model is parameterized as:
 
-\[
-V^\*(\theta)
-\]
-
+$$
+V^{*}(\theta)
+$$
 where:
 
-\[
+$$
 \theta
 =
 \left(
@@ -755,92 +713,84 @@ c_I,
 c_W,
 c_S
 \right).
-\]
-
+$$
 One-way sensitivity analysis varies one model parameter while holding the others fixed.
 
 The current analysis focuses first on the three primary physical constraints:
 
-\[
+$$
 Q,
 \qquad
 I^{\max},
 \qquad
 W^{\max}.
-\]
-
+$$
 For storage capacity:
 
-\[
+$$
 V_Q(Q)
 =
-V^\*
+V^{*}
 \left(
 Q,
 \bar I^{\max},
 \bar W^{\max},
 \ldots
 \right).
-\]
-
+$$
 For injection throughput:
 
-\[
+$$
 V_I(I^{\max})
 =
-V^\*
+V^{*}
 \left(
 \bar Q,
 I^{\max},
 \bar W^{\max},
 \ldots
 \right).
-\]
-
+$$
 For withdrawal throughput:
 
-\[
+$$
 V_W(W^{\max})
 =
-V^\*
+V^{*}
 \left(
 \bar Q,
 \bar I^{\max},
 W^{\max},
 \ldots
 \right).
-\]
-
+$$
 Discrete marginal value is estimated using:
 
-\[
+$$
 MV_p
 =
 \frac{
-V^\*(p_k)-V^\*(p_{k-1})
+V^{*}(p_k)-V^{*}(p_{k-1})
 }{
 p_k-p_{k-1}
 }.
-\]
-
+$$
 This measures the approximate incremental value generated by relaxing a physical constraint.
 
 For example:
 
-\[
+$$
 MV_Q
 =
-\frac{\Delta V^\*}{\Delta Q}
-\]
-
+\frac{\Delta V^{*}}{\Delta Q}
+$$
 estimates the value of additional storage capacity over a tested interval.
 
 If:
 
-\[
+$$
 MV_Q=0,
-\]
-
+$$
 additional tank capacity no longer increases optimized value under that scenario, implying that another constraint such as injection or withdrawal throughput has become the binding operational bottleneck.
 
 The broader sensitivity question is:
@@ -865,19 +815,18 @@ The simulation layer asks a different question:
 
 The optimizer produces planned injection and withdrawal decisions:
 
-\[
-I_t^\*,
+$$
+I_t^{*},
 \qquad
-W_t^\*.
-\]
-
+W_t^{*}.
+$$
 The SimPy model then executes those decisions through a physically constrained storage process.
 
 The deterministic simulation is first used to reproduce the optimized inventory path exactly and verify consistency between the optimization and simulation models.
 
 For the April 24, 2020 scenario:
 
-\[
+$$
 0
 \rightarrow
 40
@@ -887,8 +836,7 @@ For the April 24, 2020 scenario:
 40
 \rightarrow
 0
-\]
-
+$$
 is reproduced by the SimPy storage process.
 
 ---
@@ -899,49 +847,44 @@ Operational uncertainty is introduced through random throughput-realization fact
 
 Planned injection becomes:
 
-\[
+$$
 I_t^{realized}
 =
-A_t^I I_t^\*
-\]
-
+A_t^I I_t^{*}
+$$
 and planned withdrawal becomes:
 
-\[
+$$
 W_t^{realized}
 =
-A_t^W W_t^\*.
-\]
-
+A_t^W W_t^{*}.
+$$
 In the current illustrative implementation:
 
-\[
+$$
 A_t^I,
 A_t^W
 \sim
 U(0.7,1.0).
-\]
-
+$$
 This represents execution degradation in which the facility realizes between 70% and 100% of planned throughput.
 
 The simulation preserves physical feasibility.
 
 Realized injection cannot exceed remaining tank capacity:
 
-\[
+$$
 I_t^{realized}
 \leq
 Q-S_{t-1},
-\]
-
+$$
 and realized withdrawal cannot exceed available inventory:
 
-\[
+$$
 W_t^{realized}
 \leq
 S_{t-1}+I_t^{realized}.
-\]
-
+$$
 The realized inventory path therefore evolves according to the actual simulated operations rather than the optimizer's planned inventory path.
 
 ---
@@ -950,50 +893,44 @@ The realized inventory path therefore evolves according to the actual simulated 
 
 For each stochastic execution path, realized cash flow is calculated as:
 
-\[
+$$
 CF_t
 =
 F_tW_t^{realized}
 -
 F_tI_t^{realized}.
-\]
-
+$$
 Under the current zero-operating-cost simulation:
 
-\[
+$$
 V^{sim}
 =
 \sum_{t=1}^{T} CF_t.
-\]
-
+$$
 The deterministic MILP optimum remains:
 
-\[
-V^\*=1034
-\]
-
+$$
+V^{*}=1034
+$$
 for the April 24, 2020 test case.
 
 One illustrative stochastic realization produces approximately:
 
-\[
+$$
 V^{sim}=846.92,
-\]
-
+$$
 corresponding to an execution shortfall of:
 
-\[
+$$
 1034-846.92
 =
 187.08,
-\]
-
+$$
 or approximately:
 
-\[
+$$
 18.1\%.
-\]
-
+$$
 This path realizes approximately:
 
 - 83.7% of planned injection,
@@ -1018,94 +955,81 @@ Each run generates:
 
 For the April 24, 2020 illustrative case, the simulation produces approximately:
 
-\[
+$$
 E[V^{sim}]
 =
 805.28
-\]
-
+$$
 compared with:
 
-\[
-V^\*
+$$
+V^{*}
 =
 1034.
-\]
-
+$$
 The mean execution shortfall is therefore approximately:
 
-\[
+$$
 228.72,
-\]
-
+$$
 or:
 
-\[
+$$
 22.1\%
-\]
-
+$$
 of planned deterministic intrinsic value.
 
 The realized-value distribution has approximately:
 
-\[
+$$
 P_5
 =
 652.06,
-\]
-
-\[
+$$
+$$
 P_{50}
 =
 807.35,
-\]
-
+$$
 and:
 
-\[
+$$
 P_{95}
 =
 941.27.
-\]
-
+$$
 The simulated sample ranges from approximately:
 
-\[
+$$
 518.16
-\]
-
+$$
 to:
 
-\[
+$$
 1008.93.
-\]
-
+$$
 Approximately:
 
-\[
+$$
 34.4\%
-\]
-
+$$
 of simulations realize less than 75% of planned intrinsic value.
 
 The mean simulated injection execution rate is approximately:
 
-\[
+$$
 84.9\%,
-\]
-
+$$
 while mean withdrawal execution is approximately:
 
-\[
+$$
 81.4\%.
-\]
-
+$$
 Approximately:
 
-\[
+$$
 49.7\%
-\]
-
+$$
 of simulated paths end with positive residual terminal inventory.
 
 ---
@@ -1116,26 +1040,23 @@ The simulation framework distinguishes between planned economic value and realiz
 
 The deterministic optimizer provides:
 
-\[
-V^\*
+$$
+V^{*}
 =
 \text{value under ideal execution}.
-\]
-
+$$
 The simulation provides:
 
-\[
+$$
 V^{sim}
 =
 \text{value under uncertain execution}.
-\]
-
+$$
 The difference:
 
-\[
-V^\*-V^{sim}
-\]
-
+$$
+V^{*}-V^{sim}
+$$
 can therefore be interpreted as an execution-related value shortfall under the modeled operating uncertainty.
 
 The current simulation produces three important observations.
@@ -1150,10 +1071,9 @@ The average simulated value of approximately 805 implies that imperfect throughp
 
 The deterministic optimizer imposes:
 
-\[
+$$
 S_T=S_0=0.
-\]
-
+$$
 Stochastic execution does not necessarily satisfy this terminal condition.
 
 If realized withdrawal performance is insufficient relative to prior injection, inventory may remain in storage at the end of the modeled horizon.
@@ -1212,19 +1132,18 @@ The project also includes decision-focused optimization visualizations that join
 
 These figures are designed to communicate the connection:
 
-\[
+$$
 \text{Market Structure}
 \rightarrow
 \text{Optimal Operational Response}.
-\]
-
+$$
 For April 24, 2020, the sharply rising forward curve produces aggressive early injection followed by later withdrawal.
 
 For March 11, 2022, the downward-sloping curve produces an idle optimal policy and zero intrinsic value.
 
 Together with the simulation figures, the visualization framework now connects:
 
-\[
+$$
 \text{Market Structure}
 \rightarrow
 \text{Optimal Decision}
@@ -1232,8 +1151,7 @@ Together with the simulation figures, the visualization framework now connects:
 \text{Execution Uncertainty}
 \rightarrow
 \text{Realized Outcome}.
-\]
-
+$$
 ---
 
 ## Interpretation
@@ -1299,14 +1217,13 @@ The optimization model calculates deterministic intrinsic storage value.
 
 Conceptually:
 
-\[
+$$
 \text{Total Storage Value}
 =
 \text{Intrinsic Value}
 +
 \text{Extrinsic Value}.
-\]
-
+$$
 Intrinsic value is the value obtainable from the currently observed forward curve under modeled operating constraints.
 
 Extrinsic value arises from the ability to adapt future operating decisions as uncertain prices and forward curves evolve.
@@ -1561,4 +1478,3 @@ hedging
 The current optimization stage converts historical market structure into explicit operating decisions, while the simulation stage tests how operational uncertainty affects the realization of those decisions.
 
 Together, they provide a foundation for later dynamic stochastic valuation, hedging, and risk analysis.
-
